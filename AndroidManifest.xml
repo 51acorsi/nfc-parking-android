@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.grundid.hcedemo"
+    package="app.parking"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="app.parking.nfc.hce.MainActivity"
+            android:name="app.parking.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name="app.parking.nfc.hce.MyHostApduService"
+            android:name="app.parking.nfc.hce.NFCHostApduService"
             android:exported="true"
             android:permission="android.permission.BIND_NFC_SERVICE" >
             <intent-filter>
