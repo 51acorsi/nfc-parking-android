@@ -4,7 +4,7 @@ import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 
-public class MyHostApduService extends HostApduService {
+public class NFCHostApduService extends HostApduService {
 
 	private int messageCounter = 0;
 
@@ -17,7 +17,8 @@ public class MyHostApduService extends HostApduService {
 		}
 		else {
 			Log.i("HCEDEMO", "Received: " + new String(apdu));
-			return getNextMessage();
+			return "s4felipe".getBytes();			
+			//return getNextMessage();
 		}
 	}
 

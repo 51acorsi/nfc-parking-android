@@ -10,7 +10,7 @@ import android.widget.ListView;
 import app.parking.nfc.hce.IsoDepAdapter;
 import app.parking.nfc.hce.IsoDepTransceiver;
 import app.parking.nfc.hce.IsoDepTransceiver.OnMessageReceived;
-import de.grundid.hcedemo.R;
+import app.parking.R;
 
 public class MainActivity extends Activity implements OnMessageReceived, ReaderCallback {
 
