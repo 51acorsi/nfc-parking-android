@@ -6,5 +6,7 @@
     <string name="activity_into">Reader mode active</string>
     <string name="aiddescription">aiddescription</string>
     <string name="servicedesc">servicedesc</string>
+    <string name="CurrencyCode">R$</string>
+    <string name="UserName">UserName</string>
 
 </resources>

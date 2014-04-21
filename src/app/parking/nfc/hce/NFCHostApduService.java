@@ -3,6 +3,7 @@ package app.parking.nfc.hce;
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
+import app.parking.UserAccount;
 
 public class NFCHostApduService extends HostApduService {
 
@@ -17,8 +18,13 @@ public class NFCHostApduService extends HostApduService {
 		}
 		else {
 			Log.i("HCEDEMO", "Received: " + new String(apdu));
-			return "s4felipe".getBytes();			
-			//return getNextMessage();
+			
+			//Test to debit customer account 
+			UserAccount.setAmount(UserAccount.getAmount() - 5);
+			
+			
+			return UserAccount.getUserName().getBytes();			
+			//return getNextMessage();			
 		}
 	}
 
