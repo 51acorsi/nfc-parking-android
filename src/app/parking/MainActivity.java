@@ -3,6 +3,9 @@ package app.parking;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import parking.protocol.Protocol;
+import parking.protocol.Protocol.PaymentMethod;
 import android.app.Activity;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.ReaderCallback;
@@ -17,6 +20,7 @@ import app.parking.db.ParkingEntry;
 import app.parking.nfc.hce.IsoDepAdapter;
 import app.parking.nfc.hce.IsoDepTransceiver;
 import app.parking.nfc.hce.IsoDepTransceiver.OnMessageReceived;
+import app.parking.nfc.hce.NFCHostApduService;
 import app.parking.R;
 import app.parking.UserAccount.OnAmountChangeListener;
 
@@ -43,6 +47,8 @@ public class MainActivity extends Activity implements OnMessageReceived,
 		this.createEvents();
 		this.loadUserAccount();
 		this.loadPArkingEntryList();
+		
+		this.runSimulation();
 	}
 
 	private void initializeScreen() {
@@ -86,7 +92,7 @@ public class MainActivity extends Activity implements OnMessageReceived,
 		this.entries = new ArrayList<ParkingEntry>();
 
 		// Create fake data for testing purpose
-		this.createFakeEntries();
+		//this.createFakeEntries();
 
 		// Find the ListView resource.
 		ListView entriesView = (ListView) findViewById(R.id.lViewEntries);
@@ -123,16 +129,16 @@ public class MainActivity extends Activity implements OnMessageReceived,
 	}
 
 	private void createFakeEntries() {
-		this.entries.add(new ParkingEntry(1, 1, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 2, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 3, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 4, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 5, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 6, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 7, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 8, new Date(), 5));
-		this.entries.add(new ParkingEntry(1, 9, new Date(), 5));
-		this.entries.add(new ParkingEntry(2, 1, new Date(), 15));
+		this.entries.add(new ParkingEntry(1, 1, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 2, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 3, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 4, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 5, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 6, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 7, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 8, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(1, 9, new Date(), PaymentMethod.BY_ENTRY, 5));
+		this.entries.add(new ParkingEntry(2, 1, new Date(), PaymentMethod.BY_ENTRY, 15));
 	}
 
 	private void updateUserAmount(NumberPicker picker, int oldVal, int newVal) {
@@ -180,4 +186,19 @@ public class MainActivity extends Activity implements OnMessageReceived,
 	public void onError(Exception exception) {
 		onMessage(exception.getMessage().getBytes());
 	}
+	
+	private void runSimulation()
+	{
+		NFCHostApduService hceDemo = new NFCHostApduService();
+		byte[] command;
+		
+		
+		//Get User ID
+		command = Protocol.getUserIDCommand();
+		hceDemo.processCommandApdu(command, null);
+		
+		//Register Entry
+		command = Protocol.getSetNewRegistryCommand(1, "Parking Test", 1, new Date(), PaymentMethod.BY_ENTRY, 5);		
+		hceDemo.processCommandApdu(command, null);		
+	}	
 }
