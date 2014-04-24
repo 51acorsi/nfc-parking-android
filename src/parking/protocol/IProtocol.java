@@ -23,6 +23,7 @@ public interface IProtocol {
  */
 	
 	//Special
+	public final byte con_wrong_parameter = (byte) 0xFB;
 	public final byte con_ok = (byte) 0xFC;
 	public final byte con_unknown = (byte) 0xFD;
 	public final byte con_start = (byte) 0xFE;
