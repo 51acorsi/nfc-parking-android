@@ -2,6 +2,8 @@ package app.parking.db;
 
 import java.util.Date;
 
+import parking.protocol.Protocol.PaymentMethod;
+
 public class ParkingEntry {
 
 	public enum PaymentStatus {
@@ -12,7 +14,7 @@ public class ParkingEntry {
 	private String parkingName;
 	private int entryID;
 	private Date entryTime;
-	//private PaymentMethod paymentMethod;
+	private PaymentMethod paymentMethod;
 	private float parkingFee;
 	private PaymentStatus paymentStatus;
 
@@ -21,12 +23,12 @@ public class ParkingEntry {
 	}
 
 	public ParkingEntry(int parkingID, int entryID, Date entryTime,
-			float parkingFee) {
+			PaymentMethod paymentMethod, float parkingFee) {
 		this.parkingID = parkingID;
 		this.parkingName = "ParkingTest";
 		this.entryID = entryID;
 		this.entryTime = entryTime;
-		// this.paymentMethod = paymentMethod;
+		this.paymentMethod = paymentMethod;
 		this.parkingFee = parkingFee;
 		this.paymentStatus = PaymentStatus.Pending;
 	}
@@ -47,11 +49,10 @@ public class ParkingEntry {
 		return entryTime;
 	}
 
-//	public PaymentMethod getPaymentMethod() {
-//	return paymentMethod;
-//}//	public static void registerEntry(int parkingID, int entryID,
-//	Date entryTime, PaymentMethod paymentMethod, float parkingFee) {
-//entries.add(new ParkingEntry(parkingID, entryID, entryTime, parkingFee));
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
 	public float getParkingFee() {
 		return parkingFee;
 	}

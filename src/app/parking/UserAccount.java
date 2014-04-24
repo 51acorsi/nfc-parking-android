@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.List;
+
+import parking.protocol.Protocol.PaymentMethod;
 import app.parking.db.ParkingEntry;
 
 public class UserAccount {
@@ -55,8 +57,8 @@ public class UserAccount {
 //	}
 	
 	public static void registerEntry(int parkingID, int entryID,
-	Date entryTime, float parkingFee) {
-entries.add(new ParkingEntry(parkingID, entryID, entryTime, parkingFee));
+	Date entryTime, PaymentMethod paymentMethod, float parkingFee) {
+entries.add(new ParkingEntry(parkingID, entryID, entryTime, paymentMethod, parkingFee));
 }
 
 	// Events

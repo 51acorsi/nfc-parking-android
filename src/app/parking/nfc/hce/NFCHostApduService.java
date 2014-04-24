@@ -1,33 +1,111 @@
 package app.parking.nfc.hce;
 
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import parking.protocol.IProtocol;
+import parking.protocol.Protocol;
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 import app.parking.UserAccount;
 
-public class NFCHostApduService extends HostApduService {
+public class NFCHostApduService extends HostApduService implements IProtocol{
 
 	private int messageCounter = 0;
+	//private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
 		if (selectAidApdu(apdu)) {
 			Log.i("HCEDEMO", "Application selected");
 			return new byte[] {0x4f,0x4b};			
-			//return getWelcomeMessage();
 		}
 		else {
-			Log.i("HCEDEMO", "Received: " + new String(apdu));
-			
 			//Test to debit customer account 
-			UserAccount.setAmount(UserAccount.getAmount() - 5);
+			//UserAccount.setAmount(UserAccount.getAmount() - 5);
 			
-			
-			return UserAccount.getUserName().getBytes();			
-			//return getNextMessage();			
+			Log.i("HCEDEMO", "Received: " + new String(apdu));
+			return this.processCommandReturn(apdu);			
 		}
 	}
 
+	private byte[] processCommandReturn(byte[] dataIn) {
+		if (dataIn.length < 4)
+			return null;
+
+		// Check command start
+		if (dataIn[0] != con_start) {
+			Log.i("HCEDEMO", "Wrong start command");
+			return Protocol.getUnknownCommand();
+		}
+
+		// Check end command
+		if (dataIn[dataIn.length - 1] != con_end) {
+			Log.i("HCEDEMO", "Wrong end command");
+			return Protocol.getUnknownCommand();
+		}
+
+		switch (dataIn[1]) {
+		case con_cmd_get:
+			return this.processGetCommand(dataIn);
+
+		case con_cmd_set:
+			return this.processSetCommand(dataIn);
+			
+		default:
+			Log.i("HCEDEMO", "Unknow command: " + Hex.encodeHexString(dataIn));
+			return Protocol.getUnknownCommand();
+		}
+	}
+	
+	private byte[] processGetCommand(byte[] dataIn) {
+
+		// Look for get command
+		if (dataIn.length < 3) {
+			Log.i("HCEDEMO", "No get command specified");
+			return Protocol.getUnknownCommand();
+		}
+
+		switch (dataIn[2]) {
+		case con_nam_uid:
+			return this.getUserId();
+		default:
+			Log.i("HCEDEMO", "Unknow get command");
+			return Protocol.getUnknownCommand();
+		}
+	}
+	
+	private byte[] processSetCommand(byte[] dataIn) {
+
+		// Look for Set command
+		if (dataIn.length < 3) {
+			Log.i("HCEDEMO", "No set command specified");
+			return Protocol.getUnknownCommand();
+		}
+
+		switch (dataIn[2]) {
+		case con_nam_new_entry:
+			return this.registerNewEntry();
+		default:
+			Log.i("HCEDEMO", "Unknow set command");
+			return Protocol.getUnknownCommand();
+		}
+	}
+	
+	private byte[] getUserId()
+	{
+		return UserAccount.getUserName().getBytes();
+	}
+	
+	private byte[] registerNewEntry()
+	{
+		
+		
+		return null;
+	}
+	
 	private byte[] getWelcomeMessage() {
 		return "Hello Desktop!".getBytes();
 	}
