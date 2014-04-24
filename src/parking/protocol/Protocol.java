@@ -27,6 +27,10 @@ public class Protocol implements IProtocol {
 		return new byte[] { con_start, con_cmd_get, con_nam_uid, con_end };
 	}
 
+	public static byte[] getWrongCommandParameter() {
+		return new byte[] { con_wrong_parameter };
+	}
+
 	public static byte[] getUnknownCommand() {
 		return new byte[] { con_unknown };
 	}
@@ -35,53 +39,56 @@ public class Protocol implements IProtocol {
 		return new byte[] { con_ok };
 	}
 
-	public static byte[] getSetNewRegistryCommand(int parkingID, String parkingName,
-			int entryId, Date entryTime, PaymentMethod paymentMethod,
-			float parkingFee) {
+	public static byte[] getSetNewRegistryCommand(int parkingID,
+			String parkingName, int entryId, Date entryTime,
+			PaymentMethod paymentMethod, float parkingFee) {
 
-		//Initialize with start
-		byte[] ret = new byte[] { con_start };			
-		
-		//Limit String
-		if (parkingName.length() > 25)
-		{
+		// Initialize with start
+		byte[] ret = new byte[] { con_start };
+
+		// Limit String
+		if (parkingName.length() > 25) {
 			parkingName = parkingName.substring(0, 24);
 		}
-		
+
 		byte[] sParkingID = ByteBuffer.allocate(4).putInt(parkingID).array();
-		byte[] sParkingName = ByteBuffer.allocate(25).put(parkingName.getBytes()).array();
-		byte[] sEntryId = ByteBuffer.allocate(4).putInt(entryId).array();		
-		byte[] sEntryTime = ByteBuffer.allocate(8).putLong(entryTime.getTime()).array();		
-		byte[] sPaymentMethod = ByteBuffer.allocate(4).putInt(paymentMethod.ordinal()).array();
-		byte[] sParkingFee = ByteBuffer.allocate(4).putFloat(parkingFee).array();
-		
-		//Add Parking Id
-		ret = ArrayUtils.addAll(ret, sParkingID);
-		
-		//Add Get Command
+		byte[] sParkingName = ByteBuffer.allocate(25)
+				.put(parkingName.getBytes()).array();
+		byte[] sEntryId = ByteBuffer.allocate(4).putInt(entryId).array();
+		byte[] sEntryTime = ByteBuffer.allocate(8).putLong(entryTime.getTime())
+				.array();
+		byte[] sPaymentMethod = ByteBuffer.allocate(4)
+				.putInt(paymentMethod.ordinal()).array();
+		byte[] sParkingFee = ByteBuffer.allocate(4).putFloat(parkingFee)
+				.array();
+
+		// Add Get Command
 		ret = ArrayUtils.add(ret, con_cmd_set);
-		
-		//Add New Registry Name
+
+		// Add New Registry Name
 		ret = ArrayUtils.add(ret, con_nam_new_entry);
-		
-		//Add Parking Name
+
+		// Add Parking Id
+		ret = ArrayUtils.addAll(ret, sParkingID);
+
+		// Add Parking Name
 		ret = ArrayUtils.addAll(ret, sParkingName);
-		
-		//Add Entry Id
+
+		// Add Entry Id
 		ret = ArrayUtils.addAll(ret, sEntryId);
-		
-		//Add Entry Time
+
+		// Add Entry Time
 		ret = ArrayUtils.addAll(ret, sEntryTime);
-		
-		//Add Payment Method
+
+		// Add Payment Method
 		ret = ArrayUtils.addAll(ret, sPaymentMethod);
-		
-		//Add Parking Fee
+
+		// Add Parking Fee
 		ret = ArrayUtils.addAll(ret, sParkingFee);
-		
-		//Add New Registry Name
+
+		// Add New Registry Name
 		ret = ArrayUtils.add(ret, con_end);
-		
+
 		return ret;
 	}
 
