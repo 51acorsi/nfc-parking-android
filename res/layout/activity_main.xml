@@ -16,6 +16,26 @@
             android:text="@string/UserName" />
     </TableRow>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" >
+    </View>
+
+    <TableRow android:id="@+id/tr3" >
+
+        <CheckBox
+            android:id="@+id/cbAutoPayment"
+            android:text="@string/AutoPayment" />
+
+    </TableRow>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" >
+    </View>
+
     <TableRow
         android:id="@+id/tr2"
         android:layout_width="wrap_content"
@@ -23,25 +43,27 @@
         android:padding="5dip" >
 
         <TextView
-        android:id="@+id/txtViewCurrency"
-        android:layout_column="1"
-        android:text="@string/CurrencyCode"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="80sp" />
+            android:id="@+id/txtViewCurrency"
+            android:layout_column="0"
+            android:text="@string/CurrencyCode"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="80sp" />
 
         <NumberPicker
             android:id="@+id/npAmount"
-            android:layout_column="2" 
-            android:layout_margin="5dp"/>
+            android:layout_column="1"
+            android:layout_margin="5dp" />
     </TableRow>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" >
+    </View>
 
-
-        <ListView
-            android:id="@+id/lViewEntries"
-            android:layout_height="fill_parent" >
-        </ListView>
-        
-
+    <ListView
+        android:id="@+id/lViewEntries"
+        android:layout_height="fill_parent" >
+    </ListView>
 
 </TableLayout>

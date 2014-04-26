@@ -39,28 +39,23 @@ public class Protocol implements IProtocol {
 		return new byte[] { con_ok };
 	}
 
-	public static byte[] getSetNewRegistryCommand(int parkingID,
-			String parkingName, int entryId, Date entryTime,
+	public static byte[] getSetNewRegistryCommand(int parkingID, String parkingName, int entryId, Date entryTime,
 			PaymentMethod paymentMethod, float parkingFee) {
 
-		// Initialize with start
-		byte[] ret = new byte[] { con_start };
-
-		// Limit String
+		// Limit Parking Name String
 		if (parkingName.length() > 25) {
 			parkingName = parkingName.substring(0, 24);
 		}
 
 		byte[] sParkingID = ByteBuffer.allocate(4).putInt(parkingID).array();
-		byte[] sParkingName = ByteBuffer.allocate(25)
-				.put(parkingName.getBytes()).array();
+		byte[] sParkingName = ByteBuffer.allocate(25).put(parkingName.getBytes()).array();
 		byte[] sEntryId = ByteBuffer.allocate(4).putInt(entryId).array();
-		byte[] sEntryTime = ByteBuffer.allocate(8).putLong(entryTime.getTime())
-				.array();
-		byte[] sPaymentMethod = ByteBuffer.allocate(4)
-				.putInt(paymentMethod.ordinal()).array();
-		byte[] sParkingFee = ByteBuffer.allocate(4).putFloat(parkingFee)
-				.array();
+		byte[] sEntryTime = ByteBuffer.allocate(8).putLong(entryTime.getTime()).array();
+		byte[] sPaymentMethod = ByteBuffer.allocate(4).putInt(paymentMethod.ordinal()).array();
+		byte[] sParkingFee = ByteBuffer.allocate(4).putFloat(parkingFee).array();
+
+		// Initialize with start
+		byte[] ret = new byte[] { con_start };
 
 		// Add Get Command
 		ret = ArrayUtils.add(ret, con_cmd_set);
@@ -86,7 +81,53 @@ public class Protocol implements IProtocol {
 		// Add Parking Fee
 		ret = ArrayUtils.addAll(ret, sParkingFee);
 
-		// Add New Registry Name
+		// Add Command End
+		ret = ArrayUtils.add(ret, con_end);
+
+		return ret;
+	}
+
+	public static byte[] getReqPaymentCommand(int parkingId, int entryId) {
+
+		byte[] sParkingId = ByteBuffer.allocate(4).putInt(parkingId).array();
+		byte[] sEntryid = ByteBuffer.allocate(4).putInt(entryId).array();
+
+		// Add Command Start
+		byte[] ret = new byte[] { con_start };
+
+		// Add Request Command
+		ret = ArrayUtils.add(ret, con_cmd_req);
+
+		// Add Payment Name
+		ret = ArrayUtils.add(ret, con_nam_payment);
+
+		// Add Parking Id
+		ret = ArrayUtils.addAll(ret, sParkingId);
+
+		// Add Entry Id
+		ret = ArrayUtils.addAll(ret, sEntryid);
+
+		// Add Command End
+		ret = ArrayUtils.add(ret, con_end);
+
+		return ret;
+	}
+
+	public static byte[] getError(byte exceptionType, String msg) {
+
+		// Add Command Start
+		byte[] ret = new byte[] { con_start };
+
+		// Add Error Command
+		ret = ArrayUtils.add(ret, con_cmd_ex);
+
+		// Add Specified Error
+		ret = ArrayUtils.add(ret, exceptionType);
+
+		// Add Message
+		ret = ArrayUtils.addAll(ret, msg.getBytes());
+
+		// Add Command End
 		ret = ArrayUtils.add(ret, con_end);
 
 		return ret;

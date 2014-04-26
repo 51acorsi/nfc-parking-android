@@ -1,6 +1,7 @@
 package app.parking.nfc.hce;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
@@ -8,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import parking.protocol.IProtocol;
 import parking.protocol.Protocol;
+import parking.protocol.Protocol.PaymentMethod;
+import parking.protocol.exception.ParkingEntryNotFound;
+import parking.protocol.exception.ProtocolException;
+import parking.protocol.exception.UserAmountExceeded;
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +31,7 @@ public class NFCHostApduService extends HostApduService implements IProtocol {
 			return new byte[] { 0x4f, 0x4b };
 		} else {
 			// Test to debit customer account
-			UserAccount.setAmount(UserAccount.getAmount() - 5);
+			//UserAccount.setAmount(UserAccount.getAmount() - 5);
 
 			Log.i("HCEDEMO", "Received: " + new String(Hex.encodeHex(apdu)));
 			return this.processCommandReturn(apdu);
@@ -55,6 +60,9 @@ public class NFCHostApduService extends HostApduService implements IProtocol {
 
 		case con_cmd_set:
 			return this.processSetCommand(dataIn);
+			
+		case con_cmd_req:
+			return this.processReqCommand(dataIn);
 
 		default:
 			Log.i("HCEDEMO",
@@ -96,6 +104,23 @@ public class NFCHostApduService extends HostApduService implements IProtocol {
 			return Protocol.getUnknownCommand();
 		}
 	}
+	
+	private byte[] processReqCommand(byte[] dataIn) {
+
+		// Look for Set command
+		if (dataIn.length < 3) {
+			Log.i("HCEDEMO", "No req command specified");
+			return Protocol.getUnknownCommand();
+		}
+
+		switch (dataIn[2]) {
+		case con_nam_payment:
+			return this.requestPayment(dataIn);
+		default:
+			Log.i("HCEDEMO", "Unknow req command");
+			return Protocol.getUnknownCommand();
+		}
+	}
 
 	private byte[] getUserId() {
 		return UserAccount.getUserName().getBytes();
@@ -104,33 +129,64 @@ public class NFCHostApduService extends HostApduService implements IProtocol {
 	private byte[] registerNewEntry(byte[] dataIn) {
 		// Validate Entries
 		if (dataIn.length != 53) {
-			Log.i("HCEDEMO", "Unknow set command");
+			Log.i("HCEDEMO", "Wrong Command Parameter for regNewEntry");
 			return Protocol.getWrongCommandParameter();
 		}
 
 		byte[] bParkingName = new byte[25];
 		ByteBuffer bb = ByteBuffer.wrap(dataIn, 3, 50);
 		
+		//Retrieve Parking ID
 		int parkingId = bb.getInt();
+		
+		//Retrieve Parking Name
 		bb.get(bParkingName);
 		String parkingName = new String(bParkingName);
 		parkingName = parkingName.trim();
+		
+		//Retrieve Entry ID
+		int entryID = bb.getInt();
+		
+		//Retrieve ENtry Time
+		Date entryTime = new Date(bb.getLong());
+		
+		//Retrieve Payment Method
+		PaymentMethod paymentMethod = PaymentMethod.fromOrdinal(bb.getInt());
+		
+		//Retrieve Parking Fee
+		float parkingFee = bb.getFloat();
+		
+		UserAccount.registerEntry(parkingId, parkingName, entryID, entryTime, paymentMethod, parkingFee);
 
-		// byte[] sParkingID = ByteBuffer.allocate(4).putInt(parkingID).array();
-		// byte[] sParkingName = ByteBuffer.allocate(25)
-		// .put(parkingName.getBytes()).array();
-		// byte[] sEntryId = ByteBuffer.allocate(4).putInt(entryId).array();
-		// byte[] sEntryTime =
-		// ByteBuffer.allocate(8).putLong(entryTime.getTime())
-		// .array();
-		// byte[] sPaymentMethod = ByteBuffer.allocate(4)
-		// .putInt(paymentMethod.ordinal()).array();
-		// byte[] sParkingFee = ByteBuffer.allocate(4).putFloat(parkingFee)
-		// .array();
-
-		return null;
+		return Protocol.getConfirmCommand();
 	}
 
+	private byte[] requestPayment(byte[] dataIn) {
+		// Validate Entries
+		if (dataIn.length != 12) {
+			Log.i("HCEDEMO", "Unknow Command Parameter for reqPayment");
+			return Protocol.getWrongCommandParameter();
+		}
+
+		ByteBuffer bb = ByteBuffer.wrap(dataIn, 3, 9);
+		
+		//Retrieve Parking ID
+		int parkingId = bb.getInt();
+		
+		//Retrieve Entry ID
+		int entryId = bb.getInt();
+		
+		//Request Entry Payment
+		try {
+			UserAccount.payEntry(parkingId, entryId);
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+			return e.getErrorAPDU();
+		}
+
+		return Protocol.getConfirmCommand();
+	}	
+	
 	private byte[] getWelcomeMessage() {
 		return "Hello Desktop!".getBytes();
 	}
