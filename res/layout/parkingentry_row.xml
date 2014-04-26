@@ -2,22 +2,46 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-    
+
     <TextView
         android:id="@+id/parkingName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@+id/taskName"
+        android:text="Parking Name"
         android:textSize="30sp" >
 
+        <!-- android:text="@+id/taskName" -->
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/entryDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="01/01/2000"
+        android:textSize="12sp" >
+
+        <!-- android:text="@+id/taskInfo" -->
     </TextView>
 
     <TextView
         android:id="@+id/paymentStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@+id/taskInfo"
+        android:text="Parking Status"
         android:textSize="12sp" >
+
+        <!-- android:text="@+id/taskInfo" -->
     </TextView>
-    
+
+    <TextView
+        android:id="@+id/parkingFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R$ 5,00"
+        android:textSize="12sp" >
+
+        <!-- android:text="@+id/taskInfo" -->
+    </TextView>
+
 </LinearLayout>
