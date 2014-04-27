@@ -22,18 +22,7 @@ public class UserAccount {
 	// Events
 	private static OnAmountChangeListener mOnAmountChangeListener;
 	private static OnAutoPaymentChangeListener mOnAutoPaymentChangeListener;
-
-	private static void notifyAmountChange(float oldAmount, float newAmount) {
-		if (mOnAmountChangeListener != null) {
-			mOnAmountChangeListener.onAmountChange(oldAmount, newAmount);
-		}
-	}
-
-	private static void notifyAutoPaymentChange(boolean newValue) {
-		if (mOnAutoPaymentChangeListener != null) {
-			mOnAutoPaymentChangeListener.onStateChange(newValue);
-		}
-	}
+	private static OnEntryListChangeListener mOnEntryListChanged;
 
 	// Getters and Setters
 	public static String getUserName() {
@@ -74,7 +63,8 @@ public class UserAccount {
 	// Business Methods
 	public static void registerEntry(int parkingID, String parkingName, int entryID, Date entryTime,
 			PaymentMethod paymentMethod, float parkingFee) {
-		entries.add(new ParkingEntry(parkingID, parkingName, entryID, entryTime, paymentMethod, parkingFee));
+		entries.add(0, new ParkingEntry(parkingID, parkingName, entryID, entryTime, paymentMethod, parkingFee));
+		notifyListChange();
 	}
 
 	public static void payEntry(int parkingId, int entryId) throws ParkingEntryNotFound, UserAmountExceeded {
@@ -93,8 +83,11 @@ public class UserAccount {
 
 		if (UserAccount.autoPayment) {
 			// Pay Automatically
-			UserAccount.pay(entry.getParkingFee());
-			entry.setPaymentStatus(PaymentStatus.Paid);
+			if (entry.getPaymentStatus() == PaymentStatus.Pending) {
+				UserAccount.pay(entry.getParkingFee());
+				entry.setPaymentStatus(PaymentStatus.Paid);
+				notifyListChange();
+			}
 		} else {
 
 		}
@@ -103,11 +96,9 @@ public class UserAccount {
 	private static void pay(float amount) throws UserAmountExceeded {
 
 		if (UserAccount.amount < amount) {
-
 			throw new UserAmountExceeded();
-
 		}
-		
+
 		float oldAmount = UserAccount.amount;
 		UserAccount.amount -= amount;
 		notifyAmountChange(oldAmount, UserAccount.amount);
@@ -122,6 +113,10 @@ public class UserAccount {
 		mOnAutoPaymentChangeListener = onAutoPaymentChangeListener;
 	}
 
+	public static void setOnEntryListChanged(OnEntryListChangeListener onEntryListChanged) {
+		mOnEntryListChanged = onEntryListChanged;
+	}
+
 	// Event Interfaces
 	public interface OnAmountChangeListener extends EventListener {
 		void onAmountChange(float oldAmount, float newAmount);
@@ -129,5 +124,28 @@ public class UserAccount {
 
 	public interface OnAutoPaymentChangeListener extends EventListener {
 		void onStateChange(boolean newValue);
+	}
+
+	public interface OnEntryListChangeListener extends EventListener {
+		void onListChange(List<ParkingEntry> parkingEntries);
+	}
+
+	// Event Triggers
+	private static void notifyAmountChange(float oldAmount, float newAmount) {
+		if (mOnAmountChangeListener != null) {
+			mOnAmountChangeListener.onAmountChange(oldAmount, newAmount);
+		}
+	}
+
+	private static void notifyAutoPaymentChange(boolean newValue) {
+		if (mOnAutoPaymentChangeListener != null) {
+			mOnAutoPaymentChangeListener.onStateChange(newValue);
+		}
+	}
+
+	private static void notifyListChange() {
+		if (mOnEntryListChanged != null) {
+			mOnEntryListChanged.onListChange(UserAccount.entries);
+		}
 	}
 }

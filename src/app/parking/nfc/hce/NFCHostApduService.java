@@ -128,13 +128,13 @@ public class NFCHostApduService extends HostApduService implements IProtocol {
 
 	private byte[] registerNewEntry(byte[] dataIn) {
 		// Validate Entries
-		if (dataIn.length != 53) {
+		if (dataIn.length != 46) {
 			Log.i("HCEDEMO", "Wrong Command Parameter for regNewEntry");
 			return Protocol.getWrongCommandParameter();
 		}
 
-		byte[] bParkingName = new byte[25];
-		ByteBuffer bb = ByteBuffer.wrap(dataIn, 3, 50);
+		byte[] bParkingName = new byte[20];
+		ByteBuffer bb = ByteBuffer.wrap(dataIn, 3, 43);
 		
 		//Retrieve Parking ID
 		int parkingId = bb.getInt();
@@ -147,11 +147,11 @@ public class NFCHostApduService extends HostApduService implements IProtocol {
 		//Retrieve Entry ID
 		int entryID = bb.getInt();
 		
-		//Retrieve ENtry Time
+		//Retrieve Entry Time
 		Date entryTime = new Date(bb.getLong());
 		
 		//Retrieve Payment Method
-		PaymentMethod paymentMethod = PaymentMethod.fromOrdinal(bb.getInt());
+		PaymentMethod paymentMethod = PaymentMethod.fromOrdinal(bb.getShort());
 		
 		//Retrieve Parking Fee
 		float parkingFee = bb.getFloat();

@@ -1,6 +1,9 @@
 package app.parking;
 
+import java.util.Comparator;
 import java.util.List;
+
+import parking.protocol.Protocol.PaymentMethod;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import app.parking.db.ParkingEntry;
+import app.parking.db.ParkingEntry.PaymentStatus;
 
 public class ParkinEntryListAdapter extends ArrayAdapter<ParkingEntry> {
 
@@ -21,6 +25,29 @@ public class ParkinEntryListAdapter extends ArrayAdapter<ParkingEntry> {
 		super(context, R.layout.parkingentry_row, list);
 		this.context = context;
 		this.list = list;
+		
+//		//Set Sorting mode
+//		this.sort(new Comparator<ParkingEntry>(){			
+//		@Override
+//		public int compare(ParkingEntry p1, ParkingEntry p2) {
+//			if (p1.getPaymentStatus() == PaymentStatus.Paid)
+//			{
+//				return 2;
+//			}
+//			else
+//			{
+//				if (p1.getEntryID() > p2.getEntryID())
+//				{
+//					return 0;
+//				}
+//				else
+//				{
+//					return 1;
+//				}
+//			}
+//		}
+//			
+//		});
 	}
 
 	static class ViewHolder {
