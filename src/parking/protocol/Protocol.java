@@ -1,13 +1,8 @@
 package parking.protocol;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.nio.ByteBuffer;
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.helpers.Util;
 
 public class Protocol implements IProtocol {
 
@@ -43,15 +38,15 @@ public class Protocol implements IProtocol {
 			PaymentMethod paymentMethod, float parkingFee) {
 
 		// Limit Parking Name String
-		if (parkingName.length() > 25) {
+		if (parkingName.length() > 20) {
 			parkingName = parkingName.substring(0, 24);
 		}
 
 		byte[] sParkingID = ByteBuffer.allocate(4).putInt(parkingID).array();
-		byte[] sParkingName = ByteBuffer.allocate(25).put(parkingName.getBytes()).array();
+		byte[] sParkingName = ByteBuffer.allocate(20).put(parkingName.getBytes()).array();
 		byte[] sEntryId = ByteBuffer.allocate(4).putInt(entryId).array();
 		byte[] sEntryTime = ByteBuffer.allocate(8).putLong(entryTime.getTime()).array();
-		byte[] sPaymentMethod = ByteBuffer.allocate(4).putInt(paymentMethod.ordinal()).array();
+		byte[] sPaymentMethod = ByteBuffer.allocate(2).putShort((short)paymentMethod.ordinal()).array();
 		byte[] sParkingFee = ByteBuffer.allocate(4).putFloat(parkingFee).array();
 
 		// Initialize with start
@@ -131,6 +126,15 @@ public class Protocol implements IProtocol {
 		ret = ArrayUtils.add(ret, con_end);
 
 		return ret;
+	}
+	
+	public static boolean checkConfirmMessage(byte[] msg) {
+		if (msg == getConfirmCommand())
+		{
+			return true;
+		}
+		
+		return false;
 	}
 
 }
