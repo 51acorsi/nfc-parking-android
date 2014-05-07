@@ -26,7 +26,10 @@
 
         <CheckBox
             android:id="@+id/cbAutoPayment"
-            android:text="@string/AutoPayment" />
+            android:checked="true"
+            android:clickable="false"
+            android:text="@string/AutoPayment"
+            android:visibility="visible" />
 
     </TableRow>
 
@@ -40,19 +43,37 @@
         android:id="@+id/tr2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dip" >
+        android:padding="15dp" >
 
         <TextView
             android:id="@+id/txtViewCurrency"
+            android:layout_height="wrap_content"
             android:layout_column="0"
+            android:layout_gravity="center_vertical|center"
             android:text="@string/CurrencyCode"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#606060"
             android:textSize="80sp" />
-
+        
+        <TextView
+            android:id="@+id/txtAmount"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="center_vertical|center"
+            android:text="@string/Amount"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#FFA30F"
+            android:textSize="80sp" />
+            
         <NumberPicker
             android:id="@+id/npAmount"
-            android:layout_column="1"
-            android:layout_margin="5dp" />
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_column="2"
+            android:layout_margin="5dp"
+            android:orientation="vertical"
+            android:visibility="invisible" />
+
     </TableRow>
 
     <View
