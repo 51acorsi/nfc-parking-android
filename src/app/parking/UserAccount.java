@@ -138,6 +138,12 @@ public class UserAccount {
 	}
 
 	// Event Triggers
+	public static void forceNotification() {
+		notifyAmountChange(UserAccount.amount, UserAccount.amount);
+		notifyAutoPaymentChange(UserAccount.autoPayment);
+		notifyListChange();
+	}
+	
 	private static void notifyAmountChange(float oldAmount, float newAmount) {
 		if (mOnAmountChangeListener != null) {
 			mOnAmountChangeListener.onAmountChange(oldAmount, newAmount);

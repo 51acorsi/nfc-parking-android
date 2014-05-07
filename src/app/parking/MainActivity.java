@@ -119,12 +119,14 @@ public class MainActivity extends Activity implements OnMessageReceived,
 	}
 
 	private void loadUserAccount() {
-		UserAccount.setAmount(55);
-		UserAccount.setUserName("felipe.02");
-		UserAccount.setAutoPayment(true);
+		if (UserAccount.getUserName() == null) {
+			UserAccount.setAmount(25);
+			UserAccount.setUserName("felipe.01");
+			UserAccount.setAutoPayment(true);
 
-		TextView tView = (TextView) findViewById(R.id.txtViewUser);
-		tView.setText(UserAccount.getUserName());
+			TextView tView = (TextView) findViewById(R.id.txtViewUser);
+			tView.setText(UserAccount.getUserName());
+		}
 	}
 
 	private void loadParkingEntryList() {
@@ -170,7 +172,7 @@ public class MainActivity extends Activity implements OnMessageReceived,
 	}
 
 	private void updateUserAmount(NumberPicker picker, int oldVal, int newVal) {
-		UserAccount.setAmount(picker.getValue());
+		// UserAccount.setAmount(picker.getValue());
 	}
 
 	private void userAmountUpdated(float oldAmount, float newAmount) {
@@ -196,6 +198,7 @@ public class MainActivity extends Activity implements OnMessageReceived,
 	@Override
 	public void onResume() {
 		super.onResume();
+		UserAccount.forceNotification();
 		// nfcAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A
 		// | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
 	}
