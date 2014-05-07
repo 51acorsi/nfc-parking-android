@@ -30,9 +30,12 @@ import app.parking.nfc.hce.NFCHostApduService;
 import app.parking.R;
 import app.parking.UserAccount.OnAmountChangeListener;
 import app.parking.UserAccount.OnAutoPaymentChangeListener;
-import app.parking.UserAccount.OnEntryListChangeListener;;
+import app.parking.UserAccount.OnEntryListChangeListener;
 
-public class MainActivity extends Activity implements OnMessageReceived, ReaderCallback {
+;
+
+public class MainActivity extends Activity implements OnMessageReceived,
+		ReaderCallback {
 
 	// private List<ParkingEntry> entries;
 	private ParkinEntryListAdapter entryListAdapter;
@@ -53,12 +56,12 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 		this.loadParkingEntryList();
 		this.loadUserAccount();
 
-		//this.runSimulation();		
-		//this.createFakeEntries();
+		// this.runSimulation();
+		// this.createFakeEntries();
 	}
 
 	private void initializeScreen() {
-		Locale.setDefault(new Locale("pt", "BR"));
+		// Locale.setDefault(new Locale("en", "US"));
 		NumberPicker numPicker = (NumberPicker) findViewById(R.id.npAmount);
 		numPicker.setMinValue(0);
 		numPicker.setMaxValue(100);
@@ -70,7 +73,8 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 		NumberPicker numPicker = (NumberPicker) findViewById(R.id.npAmount);
 		numPicker.setOnValueChangedListener(new OnValueChangeListener() {
 			@Override
-			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+			public void onValueChange(NumberPicker picker, int oldVal,
+					int newVal) {
 				updateUserAmount(picker, oldVal, newVal);
 			}
 		});
@@ -88,28 +92,30 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 		cbAutoPayment.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				updateAutoPaymentUpdated(isChecked);
 			}
 		});
 
 		// UserAccount AutoPayment Listener
-		UserAccount.setOnAutoPaymentChangedListener(new OnAutoPaymentChangeListener() {
+		UserAccount
+				.setOnAutoPaymentChangedListener(new OnAutoPaymentChangeListener() {
 
-			@Override
-			public void onStateChange(boolean newValue) {
-				userAutoPaymentUpdated(newValue);
-			}
-		});
+					@Override
+					public void onStateChange(boolean newValue) {
+						userAutoPaymentUpdated(newValue);
+					}
+				});
 
 		// UserAccount List Change Listener
 		UserAccount.setOnEntryListChanged(new OnEntryListChangeListener() {
-			
+
 			@Override
 			public void onListChange(List<ParkingEntry> parkingEntries) {
-				parkingEntryListUpdated(parkingEntries);			
+				parkingEntryListUpdated(parkingEntries);
 			}
-		});		
+		});
 	}
 
 	private void loadUserAccount() {
@@ -132,7 +138,8 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 		ListView entriesView = (ListView) findViewById(R.id.lViewEntries);
 
 		// Create ArrayAdapter for task list.
-		this.entryListAdapter = new ParkinEntryListAdapter(this, UserAccount.getEntries());
+		this.entryListAdapter = new ParkinEntryListAdapter(this,
+				UserAccount.getEntries());
 
 		// Set the ArrayAdapter as the ListView's adapter.
 		entriesView.setAdapter(this.entryListAdapter);
@@ -169,6 +176,8 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 	private void userAmountUpdated(float oldAmount, float newAmount) {
 		NumberPicker numPicker = (NumberPicker) findViewById(R.id.npAmount);
 		numPicker.setValue((int) UserAccount.getAmount());
+		TextView txtAmount = (TextView) findViewById(R.id.txtAmount);
+		txtAmount.setText(UserAccount.getDisplayAmount());
 	}
 
 	private void updateAutoPaymentUpdated(boolean isChecked) {
@@ -179,9 +188,8 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 		CheckBox cbAutoPayment = (CheckBox) findViewById(R.id.cbAutoPayment);
 		cbAutoPayment.setChecked(UserAccount.getAutoPayment());
 	}
-	
-	private void parkingEntryListUpdated(List<ParkingEntry> entries)
-	{
+
+	private void parkingEntryListUpdated(List<ParkingEntry> entries) {
 		this.entryListAdapter.notifyDataSetChanged();
 	}
 
@@ -221,25 +229,35 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 	public void onError(Exception exception) {
 		onMessage(exception.getMessage().getBytes());
 	}
-	
-	//Test Methods 	
+
+	// Test Methods
 	private void createFakeEntries() {
-		UserAccount.registerEntry(1, "Parking 1", 11, new Date(), PaymentMethod.BY_ENTRY, 5);
-		UserAccount.registerEntry(1, "Parking 1", 12, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 13, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 14, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 15, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 16, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 17, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 18, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(1, "Parking 1", 19, new Date(), PaymentMethod.BY_ENTRY, 5);
-//		UserAccount.registerEntry(2, "Parking 1", 20, new Date(), PaymentMethod.BY_ENTRY, 15);
+		UserAccount.registerEntry(1, "Parking 1", 11, new Date(),
+				PaymentMethod.BY_ENTRY, 3);
+		UserAccount.registerEntry(1, "Parking 1", 12, new Date(114, 5, 1),
+				PaymentMethod.BY_ENTRY, 5);
+		UserAccount.registerEntry(1, "Parking 1", 13, new Date(114, 4, 6, 10,
+				0, 0), PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(1, "Parking 1", 14, new Date(),
+		// PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(1, "Parking 1", 15, new Date(),
+		// PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(1, "Parking 1", 16, new Date(),
+		// PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(1, "Parking 1", 17, new Date(),
+		// PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(1, "Parking 1", 18, new Date(),
+		// PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(1, "Parking 1", 19, new Date(),
+		// PaymentMethod.BY_ENTRY, 5);
+		// UserAccount.registerEntry(2, "Parking 1", 20, new Date(),
+		// PaymentMethod.BY_ENTRY, 15);
 	}
 
 	private void runSimulation() {
 		NFCHostApduService hceDemo = new NFCHostApduService();
-		byte[] command;		
-		
+		byte[] command;
+
 		// ------------------------
 		// Entry
 		// ------------------------
@@ -248,9 +266,10 @@ public class MainActivity extends Activity implements OnMessageReceived, ReaderC
 		hceDemo.processCommandApdu(command, null);
 
 		// Register Entry
-		command = Protocol.getSetNewRegistryCommand(1, "Parking Test1", 1, new Date(), PaymentMethod.BY_ENTRY, 5);
-		hceDemo.processCommandApdu(command, null);		
-		
+		command = Protocol.getSetNewRegistryCommand(1, "Parking Test1", 1,
+				new Date(), PaymentMethod.BY_ENTRY, 5);
+		hceDemo.processCommandApdu(command, null);
+
 		// ------------------------
 		// Exit
 		// ------------------------

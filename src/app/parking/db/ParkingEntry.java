@@ -1,10 +1,14 @@
 package app.parking.db;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.google.common.collect.MinMaxPriorityQueue;
+
+import android.text.format.DateUtils;
 import parking.protocol.Protocol.PaymentMethod;
 
 public class ParkingEntry {
@@ -54,8 +58,10 @@ public class ParkingEntry {
 	
 	public String getDisplayEntryTime()
 	{
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss", Locale.getDefault());
-		return df.format(this.entryTime);
+		return DateUtils.formatSameDayTime(this.entryTime.getTime(), new Date().getTime(), DateFormat.MEDIUM, DateFormat.SHORT).toString();
+		//return DateUtils.getRelativeTimeSpanString (this.entryTime.getTime(), new Date().getTime(), DateUtils.MINUTE_IN_MILLIS).toString();
+		//SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss", Locale.getDefault());
+		//return df.format(this.entryTime);
 	}
 
 	public PaymentMethod getPaymentMethod() {

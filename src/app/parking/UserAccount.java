@@ -1,5 +1,7 @@
 package app.parking;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
@@ -35,6 +37,11 @@ public class UserAccount {
 
 	public static float getAmount() {
 		return amount;
+	}
+	
+	public static String getDisplayAmount()
+	{
+		return new DecimalFormat("#.##").format(UserAccount.amount);
 	}
 
 	public static void setAmount(float amount) {
